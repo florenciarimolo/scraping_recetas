@@ -57,8 +57,8 @@ def extraccion_datos():
             # Comensales
             try:
                 comensales = html_receta_soup.find("span", {"class": "comensales"}).text.strip()
-                comensales.replace(" comensales","")
-                comensales.replace(" comensal", "")
+                comensales = comensales.replace(" comensales", "")
+                comensales = comensales.replace(" comensal", "")
                 comensales = int(comensales)
             except:
                 comensales = None
