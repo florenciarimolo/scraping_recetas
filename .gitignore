@@ -1,0 +1,4 @@
+.idea
+env
+scraping_recetas/cache.sqlite
+db.sqlite3
