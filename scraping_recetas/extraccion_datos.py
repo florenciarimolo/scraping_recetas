@@ -56,7 +56,10 @@ def extraccion_datos():
 
             # Comensales
             try:
-                comensales = html_receta_soup.find("span", {"class": "comensales"}).text.strip().replace(" comensales", "")
+                comensales = html_receta_soup.find("span", {"class": "comensales"}).text.strip()
+                comensales.replace(" comensales","")
+                comensales.replace(" comensal", "")
+                comensales = int(comensales)
             except:
                 comensales = None
 
@@ -108,9 +111,8 @@ def extraccion_datos():
                                  "preparacion": preparacion})
 
         categorias[link.text] = recetas_info
-    recetas = json.dumps(categorias, indent=4, sort_keys=True, ensure_ascii=False).encode('utf8').decode()
 
-    print(recetas)
+    return categorias
 
 
 if __name__ == "__main__":
