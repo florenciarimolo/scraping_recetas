@@ -4,3 +4,5 @@ beautifulsoup4
 requests-cache
 django-filter
 Markdown
+idna
+requests

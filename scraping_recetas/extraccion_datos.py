@@ -1,31 +1,39 @@
+# coding=utf-8
 from bs4 import BeautifulSoup
-import urllib.request
-import json
 import requests
 import requests_cache
 from idna import unicode
 
+# Guardaremos las peticiones en cache, para no tener que hacerlas cada vez que se ejecuta el script
 requests_cache.install_cache('cache', backend='sqlite', expire_after=360000)
 
 
-def extraccion_datos():
+def get_datos():
+    """
+    Este método realiza web scraping sobre la web https://www.recetasgratis.net/ para obtener toda la información de
+    las recetas de la página.
+    :return: Un diccionario donde la key es el nombre de la categoría de las recetas y el valor otro diccionario con
+    la información de las recetas.
+    """
+    # Cogemos todos los links de las categorias
+
     html_inicio = requests.get('https://www.recetasgratis.net/')
-    html_inicio.encoding = 'utf-8'
+    html_inicio.encoding('utf-8')
     html_inicio_soup = BeautifulSoup(html_inicio.text, features="html.parser")
     categorias_resultset = html_inicio_soup.find("div", {"class": "lista_menu"}).find("div", {"class": "clear"})
     links_categorias = categorias_resultset("a")
-    categorias = {}
+    recetas = {}
     for link in links_categorias:
-        print(link.text)
+        print('Obteniendo datos de la categoría ' + link.text)
         html_recetas = requests.get(link.get("href"))  # La pagina principal de la categoria
         html_recetas.encoding = 'utf-8'
         html_recetas_soup = BeautifulSoup(html_recetas.text, features="html.parser")
 
         recetas_resultset = html_recetas_soup.findAll("a", {
-            "class": "titulo titulo--resultado"})  # Guardamos los links de cada receta (de momento solo de la pag inicial)
+            "class": "titulo titulo--resultado"})  # Guardamos los links de cada receta de la primera pagina
 
         paginador = html_recetas_soup.find("div", {"class": "paginator"}).findAll("a", {"class": "ga"})
-        paginador.pop()  # Quitamos la ultima ya que es la pagina actual
+        paginador.pop()  # Quitamos el ultimo link del paginador ya que es la pagina actual
 
         for index, p in enumerate(paginador):
             html_recetas = requests.get(p.get("href"))
@@ -33,7 +41,8 @@ def extraccion_datos():
             html_recetas_soup = BeautifulSoup(html_recetas.text, features="html.parser")
             recetas_resultset.extend(
                 html_recetas_soup.findAll("a", {
-                    "class": "titulo titulo--resultado"}))  # Guardamos los links de todas las recetas de las primeras 5 paginas
+                    "class": "titulo titulo--resultado"}))  # Guardamos los links de todas las recetas de las primeras
+            # 5 paginas (el paginador solo llega a 5 en la pagina inicial)
 
         recetas_info = []  # Aqui guardaremos la informacion parseada de las recetas de la categoria actual
 
@@ -63,7 +72,6 @@ def extraccion_datos():
             except:
                 comensales = None
 
-
             # Duracion
             try:
                 duracion = html_receta_soup.find("span", {"class": "duracion"}).text.strip()
@@ -84,8 +92,6 @@ def extraccion_datos():
                 except:
                     continue
 
-
-
             # Preparacion
             preparacion_resultset = html_receta_soup.findAll("div", {"class": "apartado"})
             preparacion = []
@@ -102,6 +108,7 @@ def extraccion_datos():
                 preparacion.append({"orden": orden,
                                     "descripcion": descripcion})
 
+            # Una vez obtenidos los datos deseados, los guardamos en nuestra lista de recetas
             recetas_info.append({"titulo": titulo,
                                  "descripcion": intro,
                                  "comensales": comensales,
@@ -110,10 +117,10 @@ def extraccion_datos():
                                  "ingredientes": ingredientes,
                                  "preparacion": preparacion})
 
-        categorias[link.text] = recetas_info
+        recetas[link.text] = recetas_info
 
-    return categorias
+    return recetas
 
 
 if __name__ == "__main__":
-    extraccion_datos()
+    get_datos()
