@@ -6,6 +6,16 @@ from django_filters import rest_framework
 
 
 class RecetaViewSet(viewsets.ReadOnlyModelViewSet):
+    __doc__ = (u"""
+    Lista con todas las recetas. Filtros:
+    
+    - categoría: Dado el ID de una categoría, podemos filtrar todas las recetas de esa categoría. Por ejemplo
+    [/recetas?categoria=36](?categoria=36) nos devolvería todas las recetas de la categoría 'Verduras'. Podemos
+    ver todas las categorías y sus IDs en [/categorias/recetas/](/categorias/recetas/)
+    - ingredientes: Podemos filtrar por los ingredientes de las recetas. Por ejemplo, si queremos las recetas que tengan
+    como ingredientes acelgas o leche aplicaríamos el filtro [/recetas?ingrediente=acelgas&ingrediente=leche](?ingrediente=acelgas&ingrediente=leche)
+    """)
+
     def get_view_name(self):
         return 'Recetas'
 
@@ -13,11 +23,11 @@ class RecetaViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
     ordering = ['titulo', ]
     ordering_fields = ['titulo', 'categoria']
-    filter_fields = ['categoria', 'ingredientes']
+    filter_fields = ['categoria', ]
 
     def get_queryset(self):
         ingredientes = self.request.GET.getlist('ingrediente')
-        if ingredientes is None:
+        if ingredientes is None or ingredientes == []:
             return Receta.objects.all()
         objs_ingredientes = []
         for i in ingredientes:
@@ -29,10 +39,10 @@ class RecetaViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CategoriaListView(generics.ListAPIView):
     def get_view_name(self):
-        return 'Categorias'
+        return 'Categorías'
 
     serializer_class = CategoriaConRecetasSerializer
     queryset = Categoria.objects.all()
     filter_backends = [filters.OrderingFilter]
-    ordering = ['categoria', ]
-    ordering_fields = ['categoria', ]
+    ordering = ['nombre', ]
+    ordering_fields = ['nombre', ]
