@@ -11,7 +11,7 @@ Este es un proyecto de prueba de web scraping sobre el sitio web [https://www.re
 - Instalar requirements (``pip install -r requirements.txt``)
 - Crear variable de entorno para Django (``export DJANGO_SETTINGS_MODULE=scraping_recetas.local_settings``)
 
-Para realizar este proyecto se han realizado los siguientes pasos:
+Para este proyecto se han realizado los siguientes pasos:
 
 ### 1. Extracción de datos
 Extraer los datos de las recetas de la página mediante un script en Python. Este script se encuentra en el archivo 
