@@ -10,11 +10,21 @@ class RecetaViewSet(viewsets.ReadOnlyModelViewSet):
         return 'Recetas'
 
     serializer_class = RecetaSerializer
-    queryset = Receta.objects.all()
     filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
     ordering = ['titulo', ]
     ordering_fields = ['titulo', 'categoria']
-    filter_fields = ['categoria']
+    filter_fields = ['categoria', 'ingredientes']
+
+    def get_queryset(self):
+        ingredientes = self.request.GET.getlist('ingrediente')
+        if ingredientes is None:
+            return Receta.objects.all()
+        objs_ingredientes = []
+        for i in ingredientes:
+            objs_ingredientes.extend(IngredienteReceta.objects.filter(ingrediente__contains=i))
+
+        id_recetas = [ing.receta_id for ing in objs_ingredientes]
+        return Receta.objects.filter(id__in=id_recetas)
 
 
 class CategoriaListView(generics.ListAPIView):
