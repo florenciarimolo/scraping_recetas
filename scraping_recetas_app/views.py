@@ -1,8 +1,29 @@
+from collections import OrderedDict
+
 from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
 from scraping_recetas_app.models import Receta, Categoria, PreparacionReceta, IngredienteReceta
 from scraping_recetas_app.serializers import CategoriaSerializer, RecetaSerializer, CategoriaConRecetasSerializer
 from rest_framework import generics, viewsets, filters
 from django_filters import rest_framework
+
+
+class APIRoot(generics.GenericAPIView):
+    __doc__ = ("""
+    Esta API muestra la información de las recetas obtenidas en la web [https://www.recetasgratis.net/](https://www.recetasgratis.net/).
+    """)
+
+    def get_view_name(self):
+        return 'API Recetas'
+
+    def get(self, request, format=None):
+        data = OrderedDict((
+            ('recetas', reverse('scraping_recetas_app:receta-list', request=request, format=format)),
+            ('categorias-recetas', reverse('scraping_recetas_app:categorias-recetas', request=request, format=format)),
+        ))
+        return Response(data, )
 
 
 class RecetaViewSet(viewsets.ReadOnlyModelViewSet):
