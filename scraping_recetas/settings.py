@@ -123,17 +123,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# File based cache
-# https://docs.djangoproject.com/en/2.2/topics/cache/
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'cache_datos'),
-        'TIMEOUT': None
-    }
-}
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
