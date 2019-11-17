@@ -7,3 +7,4 @@ Markdown
 idna
 requests
 gunicorn
+whitenoise
