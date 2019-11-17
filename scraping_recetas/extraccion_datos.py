@@ -118,7 +118,7 @@ def get_datos():
                                  "preparacion": preparacion})
 
         recetas[link.text] = recetas_info
-
+    print(recetas)
     return recetas
 
 
