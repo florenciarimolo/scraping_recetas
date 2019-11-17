@@ -14,7 +14,7 @@ class CategoriaConRecetasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categoria
-        fields = ['categoria', 'recetas']
+        fields = ['nombre', 'recetas']
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
