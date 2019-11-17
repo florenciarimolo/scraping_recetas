@@ -23,7 +23,7 @@ class Receta(models.Model):
 
 
 class IngredienteReceta(models.Model):
-    receta = models.ForeignKey(Receta, related_name='ingrediente', on_delete=models.CASCADE)
+    receta = models.ForeignKey(Receta, related_name='ingredientes', on_delete=models.CASCADE)
     ingrediente = models.CharField(max_length=50)
 
     class Meta:
