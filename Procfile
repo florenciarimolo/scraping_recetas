@@ -1,1 +1,1 @@
-web: gunicorn django_api.wsgi --log-file -
+web: gunicorn scraping_recetas.wsgi --log-file -
