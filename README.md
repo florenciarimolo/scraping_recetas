@@ -42,7 +42,7 @@ python almacenamiento_datos.py
 Después de obtener y almacenar estos datos, se ha creado una API REST con Django REST Framework para mostrarlos.
 Para no tener que configurar el entorno local y ejecutarla, se ha hecho un deploy en Heroku: 
 [https://prueba-scraping-recetas.herokuapp.com/](https://prueba-scraping-recetas.herokuapp.com/).
-Esta API es explorable y documentada.``
+Esta API es explorable y documentada.
 
 
 ## Ejecución en local
