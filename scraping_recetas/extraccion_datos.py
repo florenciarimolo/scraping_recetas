@@ -5,6 +5,8 @@ import requests_cache
 from idna import unicode
 
 # Guardaremos las peticiones en cache, para no tener que hacerlas cada vez que se ejecuta el script
+from rest_framework.utils import json
+
 requests_cache.install_cache('cache', backend='sqlite', expire_after=360000)
 
 
@@ -18,7 +20,6 @@ def get_datos():
     # Cogemos todos los links de las categorias
 
     html_inicio = requests.get('https://www.recetasgratis.net/')
-    html_inicio.encoding('utf-8')
     html_inicio_soup = BeautifulSoup(html_inicio.text, features="html.parser")
     categorias_resultset = html_inicio_soup.find("div", {"class": "lista_menu"}).find("div", {"class": "clear"})
     links_categorias = categorias_resultset("a")
@@ -26,7 +27,6 @@ def get_datos():
     for link in links_categorias:
         print('Obteniendo datos de la categoría ' + link.text)
         html_recetas = requests.get(link.get("href"))  # La pagina principal de la categoria
-        html_recetas.encoding = 'utf-8'
         html_recetas_soup = BeautifulSoup(html_recetas.text, features="html.parser")
 
         recetas_resultset = html_recetas_soup.findAll("a", {
@@ -37,7 +37,6 @@ def get_datos():
 
         for index, p in enumerate(paginador):
             html_recetas = requests.get(p.get("href"))
-            html_recetas.encoding = 'utf-8'
             html_recetas_soup = BeautifulSoup(html_recetas.text, features="html.parser")
             recetas_resultset.extend(
                 html_recetas_soup.findAll("a", {
@@ -118,7 +117,7 @@ def get_datos():
                                  "preparacion": preparacion})
 
         recetas[link.text] = recetas_info
-    print(recetas)
+    print(json.dumps(recetas, indent=4, sort_keys=True, ensure_ascii=False).encode('utf8').decode())
     return recetas
 
 
