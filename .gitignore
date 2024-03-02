@@ -1,3 +1,7 @@
 .idea
 env
 scraping_recetas/cache.sqlite
+.vscode
+__pycache__
+staticfiles
+venv

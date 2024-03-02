@@ -1,3 +1,3 @@
-import scraping_recetas.settings
+from .settings import *
 
 DEBUG = True

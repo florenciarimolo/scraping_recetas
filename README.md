@@ -4,7 +4,7 @@ Este es un proyecto de prueba de web scraping sobre el sitio web [https://www.re
 
 ## Requisitos
 
-- Python 3.7
+- Python 3.12
 - virtualenv (``pip install virtualenv``)
 - Crear virtualenv (``virtualenv env``)
 - Activar virtualenv (``source env/bin/activate``)
@@ -23,9 +23,7 @@ python extraccion_datos.py
 
 Después de unos instantes, nos mostrará los datos obtenidos de las recetas.
 La primera vez tardará unos minutos, ya que se ejecutan miles de peticiones a la página. Es por eso que se ha configurado
-una caché en base de datos que, por motivos de tamaño, Git no deja subir al repositorio. En el siguiente enlace
-se puede descargar la caché que yo he utilizado y así ahorrar tiempo de ejecución: [https://drive.google.com/open?id=1nqrRVgHpMPWeb_oG_7dtgP4KVpg_w3h_](https://drive.google.com/open?id=1nqrRVgHpMPWeb_oG_7dtgP4KVpg_w3h_).
-Descargar este archivo dentro del directorio ``scraping_recetas``.
+una caché en base de datos que, por motivos de tamaño, Git no deja subir al repositorio.
 
 ### 2. Almacenamiento de datos
 Para almacenar estos datos en nuestra base de datos, se ha creado un script en Python que obtiene los datos de las recetas
@@ -46,9 +44,14 @@ Esta API es explorable y documentada.
 
 
 ## Ejecución en local
-Si queremos ejecutar el proyecto en local, escribimos en la consola:
+Primero debemos tener activado el `virtualenv` tal y como se ha indicado en el paso 1. Una vez activado, primero ejecutaremos las migraciones de la base de datos:
+```python
+python manage.py migrate
+```
 
-````
+Luego arrancamos el servidor:
+````python
 python manage.py runserver
 ````
+Y listo, ya podemos acceder a `localhost:8000` y visualizar la API.
 

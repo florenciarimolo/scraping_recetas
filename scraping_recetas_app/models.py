@@ -10,6 +10,7 @@ class Categoria(models.Model):
     class Meta:
         managed = True
         db_table = 'categoria'
+        app_label = 'scraping_recetas'
 
 
 class Receta(models.Model):
@@ -23,6 +24,7 @@ class Receta(models.Model):
     class Meta:
         managed = True
         db_table = 'receta'
+        app_label = 'scraping_recetas'
 
 
 class IngredienteReceta(models.Model):
@@ -32,6 +34,7 @@ class IngredienteReceta(models.Model):
     class Meta:
         managed = True
         db_table = 'ingrediente_receta'
+        app_label = 'scraping_recetas'
 
 
 class PreparacionReceta(models.Model):
@@ -42,3 +45,4 @@ class PreparacionReceta(models.Model):
     class Meta:
         managed = True
         db_table = 'preparacion_receta'
+        app_label = 'scraping_recetas'
