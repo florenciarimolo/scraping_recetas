@@ -10,8 +10,17 @@ class Categoria(models.Model):
     class Meta:
         managed = True
         db_table = 'categoria'
-        app_label = 'scraping_recetas'
 
+class Subcategoria(models.Model):
+    nombre = models.CharField(max_length=50)
+    categoria = models.ForeignKey(Categoria, related_name='subcategorias', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        managed = True
+        db_table = 'subcategoria'
 
 class Receta(models.Model):
     titulo = models.CharField(max_length=200)
@@ -19,12 +28,11 @@ class Receta(models.Model):
     comensales = models.IntegerField(null=True)
     duracion = models.CharField(max_length=20, null=True)
     tipo_comida = models.CharField(max_length=50, null=True)
-    categoria = models.ForeignKey(Categoria, related_name='recetas', on_delete=models.CASCADE)
+    subcategoria = models.ForeignKey(Subcategoria, related_name='recetas', on_delete=models.CASCADE, null=True)
 
     class Meta:
         managed = True
         db_table = 'receta'
-        app_label = 'scraping_recetas'
 
 
 class IngredienteReceta(models.Model):
@@ -34,7 +42,6 @@ class IngredienteReceta(models.Model):
     class Meta:
         managed = True
         db_table = 'ingrediente_receta'
-        app_label = 'scraping_recetas'
 
 
 class PreparacionReceta(models.Model):
@@ -45,4 +52,3 @@ class PreparacionReceta(models.Model):
     class Meta:
         managed = True
         db_table = 'preparacion_receta'
-        app_label = 'scraping_recetas'

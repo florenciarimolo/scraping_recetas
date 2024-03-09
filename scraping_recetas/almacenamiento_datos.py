@@ -1,9 +1,14 @@
 # coding=utf-8
 import django
+import sys
+from pathlib import Path
+sys.path.append(Path(__file__).resolve().parent.parent.__str__())
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE','scraping_recetas.locale_settings')
 
 django.setup()
-from scraping_recetas.extraccion_datos import get_datos
-from scraping_recetas_app.models import Receta, Categoria, IngredienteReceta, PreparacionReceta
+from extraccion_datos import get_datos
+from scraping_recetas_app.models import Receta, Categoria, IngredienteReceta, PreparacionReceta, Subcategoria
 from django.db import transaction
 
 
@@ -17,10 +22,10 @@ def almacena_datos():
     sid = transaction.savepoint()
     datos = get_datos()
     print("Iniciando extracción...")
-    for categoria, recetas in datos.items():
+    for categoria, subcategoria in datos.items():
         print("Guardando categoría: " + categoria)
         try:
-            c = Categoria(categoria=categoria)
+            c = Categoria(nombre=categoria)
             c.save()
         except Exception as e:
             # En caso que haya alguna excepción al guardar, escribimos el mensaje en la consola y deshacemos los cambios
@@ -29,28 +34,31 @@ def almacena_datos():
             transaction.savepoint_rollback(sid)
             break
 
-        for r in recetas:
-            titulo = r.get("titulo")
-            tipo_comida = r.get("tipo_comida")
-            comensales = r.get("comensales")
-            duracion = r.get("duracion")
-            ingredientes = r.get("ingredientes")
-            descripcion = r.get("descripcion")
-            prepacacion = r.get("preparacion")
+        for sub, recetas in subcategoria.items():
+            print("Guardando subcategoría: " + sub)
             try:
-                rec = Receta(titulo=titulo, tipo_comida=tipo_comida, comensales=comensales, duracion=duracion,
-                             descripcion=descripcion, categoria=c)
-                rec.save()
+                s = Subcategoria(nombre=sub, categoria=c)
+                s.save()
             except Exception as e:
                 # En caso que haya alguna excepción al guardar, escribimos el mensaje en la consola y deshacemos los cambios
                 # en la BD
                 print(str(e))
+                
                 transaction.savepoint_rollback(sid)
                 break
-
-            for i in ingredientes:
+            
+            for r in recetas:
+                titulo = r.get("titulo")
+                tipo_comida = r.get("tipo_comida")
+                comensales = r.get("comensales")
+                duracion = r.get("duracion")
+                ingredientes = r.get("ingredientes")
+                descripcion = r.get("descripcion")
+                prepacacion = r.get("preparacion")
                 try:
-                    IngredienteReceta(receta=rec, ingrediente=i).save()
+                    rec = Receta(titulo=titulo, tipo_comida=tipo_comida, comensales=comensales, duracion=duracion,
+                                descripcion=descripcion, subcategoria=s)
+                    rec.save()
                 except Exception as e:
                     # En caso que haya alguna excepción al guardar, escribimos el mensaje en la consola y deshacemos los cambios
                     # en la BD
@@ -58,15 +66,25 @@ def almacena_datos():
                     transaction.savepoint_rollback(sid)
                     break
 
-            for p in prepacacion:
-                try:
-                    PreparacionReceta(receta=rec, orden=p.get("orden"), descripcion=p.get("descripcion")).save()
-                except Exception as e:
-                    # En caso que haya alguna excepción al guardar, escribimos el mensaje en la consola y deshacemos los cambios
-                    # en la BD
-                    print(str(e))
-                    transaction.savepoint_rollback(sid)
-                    break
+                for i in ingredientes:
+                    try:
+                        IngredienteReceta(receta=rec, ingrediente=i).save()
+                    except Exception as e:
+                        # En caso que haya alguna excepción al guardar, escribimos el mensaje en la consola y deshacemos los cambios
+                        # en la BD
+                        print(str(e))
+                        transaction.savepoint_rollback(sid)
+                        break
+
+                for p in prepacacion:
+                    try:
+                        PreparacionReceta(receta=rec, orden=p.get("orden"), descripcion=p.get("descripcion")).save()
+                    except Exception as e:
+                        # En caso que haya alguna excepción al guardar, escribimos el mensaje en la consola y deshacemos los cambios
+                        # en la BD
+                        print(str(e))
+                        transaction.savepoint_rollback(sid)
+                        break
 
     print("Guardado con éxito.")
 

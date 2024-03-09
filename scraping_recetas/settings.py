@@ -85,6 +85,20 @@ DATABASES = {
     }
 }
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'scraping_recetas',
+#        'USER': 'scraping_recetas',
+#        'PASSWORD': 'scr4p1ng_r3c3t4s',
+#        'HOST': '127.0.0.1',
+#        'PORT': '5432',
+#        'OPTIONS': {
+#            'client_encoding': 'UTF8',
+#        }
+#    }
+#}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
