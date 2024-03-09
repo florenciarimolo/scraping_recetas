@@ -2,29 +2,45 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from scraping_recetas_app.models import Receta, Categoria, IngredienteReceta, PreparacionReceta
+from scraping_recetas_app.models import Receta, Categoria, IngredienteReceta, PreparacionReceta, Subcategoria
 
+class SubcategoriaSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
 
-class CategoriaConRecetasSerializer(serializers.ModelSerializer):
-    recetas = serializers.HyperlinkedIdentityField(
-        many=True,
-        read_only=True,
-        view_name='scraping_recetas_app:receta-detail'
-    )
+    def get_url(self, obj):
+        request = self.context.get('request', None)
+        format = self.context.get('format', None)
+        kwargs = {'pk': obj.id, 'id_categoria': obj.categoria.id}
+        return reverse('scraping_recetas_app:subcategoria-detail', request=request, format=format,
+                       kwargs=kwargs)
+    class Meta:
+        model = Subcategoria
+        fields = ['id', 'nombre', 'url']
+
+class CategoriaConSubcategoriasSerializer(serializers.ModelSerializer):
+    subcategorias = SubcategoriaSerializer(many=True)
 
     class Meta:
         model = Categoria
+        fields = ['id', 'nombre', 'subcategorias']
+
+class SubcategoriaConRecetasSerializer(serializers.ModelSerializer):
+    recetas = serializers.SerializerMethodField()
+
+    def get_recetas(self, obj):
+        request = self.context.get('request', None)
+        format = self.context.get('format', None)
+        kwargs = {'id_subcategoria': obj.id, 'id_categoria': obj.categoria.id}
+        return reverse('scraping_recetas_app:receta-list', request=request, format=format,
+                       kwargs=kwargs)
+
+    class Meta:
+        model = Subcategoria
         fields = ['id', 'nombre', 'recetas']
 
 
-class CategoriaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categoria
-        fields = '__all__'
-
-
 class RecetaSerializer(serializers.ModelSerializer):
-    categoria = CategoriaSerializer()
+    subcategoria = SubcategoriaSerializer
     ingredientes = serializers.SlugRelatedField(
         many=True,
         queryset=IngredienteReceta.objects.all(),
@@ -40,11 +56,11 @@ class RecetaSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         request = self.context.get('request', None)
         format = self.context.get('format', None)
-        kwargs = {'pk': obj.id}
+        kwargs = {'pk': obj.id, 'id_subcategoria': obj.subcategoria.id, 'id_categoria': obj.subcategoria.categoria.id}
         return reverse('scraping_recetas_app:receta-detail', request=request, format=format,
                        kwargs=kwargs)
 
     class Meta:
         model = Receta
-        fields = ['id', 'categoria', 'ingredientes', 'preparacion', 'titulo', 'descripcion', 'comensales', 'duracion',
+        fields = ['id', 'subcategoria', 'ingredientes', 'preparacion', 'titulo', 'descripcion', 'comensales', 'duracion',
                   'tipo_comida', 'url']
