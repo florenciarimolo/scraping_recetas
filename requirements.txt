@@ -6,7 +6,7 @@ django-filter==23.5
 Markdown==3.5.2
 idna==3.6
 requests==2.31.0
-gunicorn==21.2.0
+gunicorn==22.0.0
 whitenoise==6.6.0
 psycopg==3.1.18
 psycopg-binay==3.1.18
