@@ -5,7 +5,7 @@ requests-cache==1.2.0
 django-filter==23.5
 Markdown==3.5.2
 idna==3.6
-requests==2.31.0
+requests==2.32.0
 gunicorn==21.2.0
 whitenoise==6.6.0
 psycopg==3.1.18
